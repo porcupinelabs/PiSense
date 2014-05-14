@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span12">
+
+      <ul class="dash">
+        <li ng-repeat="node in nodes | orderBy: 'Id'">
+          <span class="dashitem">
+            <dt>
+              {{node.Nickname}} ({{node.Id}}) {{node.LastDateTimeAgo}}
+                <span class="dashbtn">
+                    <a class='btn btn-success btn-xs' href="#/node/{{node.Id}}"><span class="glyphicon glyphicon-cog"></span></a>
+                </span>
+                <span>
+                    <span data-ng-show="node.LastBattery>90"><img class="battery_10" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>80 && node.LastBattery<=90"><img class="battery_9" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>70 && node.LastBattery<=80"><img class="battery_8" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>60 && node.LastBattery<=70"><img class="battery_7" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>50 && node.LastBattery<=60"><img class="battery_6" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>40 && node.LastBattery<=50"><img class="battery_5" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>30 && node.LastBattery<=40"><img class="battery_4" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>20 && node.LastBattery<=30"><img class="battery_3" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>10 && node.LastBattery<=20"><img class="battery_2" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery>0  && node.LastBattery<=10"><img class="battery_1" src="img/trans.png"></span>
+                    <span data-ng-show="node.LastBattery<=0"><img class="battery_0" src="img/trans.png"></span>
+                </span>
+                <span ng-switch on="node.LastSignalStrength">
+										<img ng-switch-when=6 class="signal_6" src="img/trans.png">
+										<img ng-switch-when=5 class="signal_5" src="img/trans.png">
+										<img ng-switch-when=4 class="signal_4" src="img/trans.png">
+										<img ng-switch-when=3 class="signal_3" src="img/trans.png">
+										<img ng-switch-when=2 class="signal_2" src="img/trans.png">
+										<img ng-switch-when=1 class="signal_1" src="img/trans.png">
+                </span>
+            </dt>
+          </span>
+          <ul>
+            <li ng-repeat="sensor in node.SensorList">
+                <dt>{{sensor.Property}}</dt>
+                <dd>{{sensor.LastValue}}</dd>
+                <dt>{{sensor.Units}}</dt>
+            </li>
+          </ul>
+        </li>
+      </ul>
+
+      <button type="button" class="btn btn-primary btn-xs pull-right" ng-click="refresh()"><span class="glyphicon glyphicon-repeat"></span> Refresh</button>
+
+    </div>
+  </div>
+</div>

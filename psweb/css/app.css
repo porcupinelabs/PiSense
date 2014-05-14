@@ -1,0 +1,107 @@
+/* app css stylesheet */
+
+.navbar-brand {
+  padding: 0px 50px 0px 0px;
+}
+
+/** Node Detail **/
+
+h1.nodetitle {
+  padding-left: 10px;
+  font-weight: bold;
+  font-size: 1.6em;
+}
+
+ul.nodedetail {
+  clear: both;
+  margin: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+ul.nodedetail > li{
+  display: inline-block;
+  margin: 5px;
+  width: 500px;
+  vertical-align: top;
+}
+
+ul.nodedetail > li > div > img{
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  height: 300px;
+  width: 300px;
+}
+
+.panel-heading {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+ul.nodedetail dt {
+  font-weight: bold;
+}
+
+
+/** Dashboard **/
+
+
+.dashitem > dt {
+  padding: 0px 10px 0px 10px;
+  font-weight: bold;
+  font-size: 1.2em;
+  background-color: #888888;
+  color: #222222;
+  height: 30px;
+}
+
+.dashitem > dt > span{
+  float: right;
+  margin-left: 10px;
+}
+
+.dashitem > dt > a > img{
+  vertical-align: top;
+  padding: 1px 2px 1px 2px;
+}
+
+ul.dash {
+  clear: both;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+ul.dash > li{
+  margin: 5px 5px 5px 5px;
+  display: inline-block;
+  vertical-align: top;
+  background-color: #F0F0F0;
+}
+	
+ul.dash > li > ul {
+  padding-left:0;	
+}
+
+ul.dash > li > ul > li{
+  margin: 5px 5px 5px 5px;
+  border-radius:10px;
+  display: inline-block;
+  background-color: #C0C0C0;
+  text-align:center
+}
+
+ul.dash > li > ul > li > dt{
+	font-size: 0.8em;
+	font-weight: normal;
+}
+
+ul.dash > li > ul > li > dd{
+  font-size: 2.0em;
+  font-weight: bold;
+  background-color: #5CB85C;
+  padding: 0px 10px 0px 10px;
+  min-width: 75px;
+}
+

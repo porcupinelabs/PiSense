@@ -1,0 +1,50 @@
+<h1 class="nodetitle">{{node.Nickname}}</h1>
+
+<ul class="nodedetail">
+  <li>
+    <div class="panel panel-default">
+      <img ng-src="img/nodes/{{node.Model}}-{{node.HardwareVersion}}.jpg">
+    </div>
+  </li>
+  <li>
+    <div class="panel panel-default">
+      <div class="panel-heading">Node Info</div>
+      <table class="table table-condensed">
+        <tr><td><dt>Node Name:</dt></td>         <td><dd>{{node.Nickname}}</dd></td></tr>
+        <tr><td><dt>Serial Number:</dt></td>     <td><dd>{{node.Id}}</dd></td></tr>
+        <tr><td><dt>Model:</dt></td>             <td><dd>{{node.Model}}</dd></td></tr>
+        <tr><td><dt>Manufacturer:</dt></td>      <td><dd>{{node.Manufacturer}}</dd></td></tr>
+        <tr><td><dt>Hardware Version:</dt></td>  <td><dd>{{node.HardwareVersion}}</dd></td></tr>
+        <tr><td><dt>Firmware Version:</dt></td>  <td><dd>{{node.FirmwareVersion}}</dd></td></tr>
+        <tr><td><dt>Number of Sensors:</dt></td> <td><dd>{{node.SensorCount}}</dd></td></tr>
+        <tr><td><dt>Link Quality</dt></td>       <td><dd>{{node.LastLqi}} %</dd></td></tr>
+        <tr><td><dt>RSSI</dt></td>               <td><dd>{{node.LastRssi}}</dd></td></tr>
+        <tr><td><dt>Battery</dt></td>            <td><dd>{{node.LastBattery}} %</dd></td></tr>
+        <tr><td><dt>Last Report</dt></td>        <td><dd>{{node.LastDateTimeAgo}}</dd></td></tr>
+      </table>
+    </div>
+  </li>
+  <li ng-repeat="sensor in node.SensorList | orderBy: 'SensorNum'">
+    <div class="panel panel-default">
+      <div class="panel-heading">{{sensor.Property}} Sensor</div>
+      <table class="table table-condensed">
+        <tr><td><dt>Last Value:</dt></td>         <td><dd>{{sensor.LastValue}}</dd></td></tr>
+        <tr><td><dt>Units:</dt></td>              <td><dd>{{sensor.Units}}</dd></td></tr>
+        <tr><td><dt>Minimum:</dt></td>            <td><dd>{{sensor.Minimum}}</dd></td></tr>
+        <tr><td><dt>Maximum:</dt></td>            <td><dd>{{sensor.Maximum}}</dd></td></tr>
+
+        <!--
+        <tr><td><dt>Report at Interval?</dt></td> <td><dd>{{sensor.IntervalEnable}}</dd></td></tr>
+        <tr><td><dt>Interval Time:</dt></td>      <td><dd>{{sensor.IntervalTime}}</dd></td></tr>
+        <tr><td><dt>Report at % Change:</dt></td> <td><dd>{{sensor.ChangePercentEnable}}</dd></td></tr>
+        <tr><td><dt>Change % Trigger:</dt></td>   <td><dd>{{sensor.ChangePercent}}</dd></td></tr>
+        <tr><td><dt>Report if Above:</dt></td>    <td><dd>{{sensor.ThreshMaxEnable}}</dd></td></tr>
+        <tr><td><dt>High Threshold:</dt></td>     <td><dd>{{sensor.ThreshMax}}</dd></td></tr>
+        <tr><td><dt>Report if Below:</dt></td>    <td><dd>{{sensor.ThreshMinEnable}}</dd></td></tr>
+        <tr><td><dt>Low Threshold:</dt></td>      <td><dd>{{sensor.ThreshMin}}</dd></td></tr>
+        -->
+      </table>
+    </div>
+  </li>
+</ul>
+
