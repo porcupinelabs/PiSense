@@ -32,9 +32,9 @@ serNum = '10001007'
 attrCount_str = GetAttrCount(serNum)
 sensorCount_str = GetSensorCount(serNum)
 sensorAttribCount_str = GetSensorAttribCount(serNum)
-attrCount= int(attrCount)
-sensorCount= int(sensorCount)
-sensorAttribCount= int(sensorAttribCount)
+attrCount= int(attrCount_str)
+sensorCount= int(sensorCount_str)
+sensorAttribCount= int(sensorAttribCount_str)
 print attrCount
 
 for attrNum in range(attrCount-sensorAttribCount):
@@ -44,7 +44,7 @@ for attrNum in range(attrCount-sensorAttribCount):
 for attrNum in range(sensorAttribCount):
     attrCode = GetAttrCode(serNum, attrNum+attrCount-sensorAttribCount)
     if not attrCode == ATTRIB_NULL:
-        name=GetAttrName(serNum, attrCode+attrCount-sensorAttribCount)
+        name=GetAttrName(serNum, attrNum+attrCount-sensorAttribCount)
         for instance in range(sensorCount):
             print attrNum, name,'(',instance,'):', GetAttr(serNum, attrCode, instance)
 
