@@ -1,0 +1,9 @@
+{
+'10001007':
+[
+{'Module':'CalAdder', 'Output':'X-axis Angular Velocity', 'Units':'dps', 'Params':[5],  'Inputs':['X-axis Angular Velocity'], 'Replace':[1]},
+{'Module':'CalAdder', 'Output':'Y-axis Angular Velocity', 'Units':'dps', 'Params':[75], 'Inputs':['Y-axis Angular Velocity'], 'Replace':[1]},
+{'Module':'CalAdder', 'Output':'Z-axis Angular Velocity', 'Units':'dps', 'Params':[4],  'Inputs':['Z-axis Angular Velocity'], 'Replace':[1]},
+]
+}
+

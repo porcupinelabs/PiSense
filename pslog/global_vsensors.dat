@@ -1,0 +1,7 @@
+[
+{'Module':'C2F',            'Output':'Temperature', 'Units':'deg F', 'Params':[],        'Inputs':['Temperature'],                                                                  'Replace':[1]},
+{'Module':'Magnitude3axis', 'Output':'Acceleration','Units':'g',     'Params':[16384], 'Inputs':['X-axis Acceleration','Y-axis Acceleration','Z-axis Acceleration'],              'Replace':[1,1,1]},
+{'Module':'Magnitude3axis', 'Output':'Spin',        'Units':'dps',   'Params':[32768], 'Inputs':['X-axis Angular Velocity','Y-axis Angular Velocity','Z-axis Angular Velocity'],  'Replace':[1,1,1]},
+{'Module':'Heading',        'Output':'Heading',     'Units':'deg',   'Params':[16384],        'Inputs':['X-axis Acceleration','Y-axis Acceleration','Z-axis Acceleration','X-axis Flux Density','Y-axis Flux Density','Z-axis Flux Density'], 'Replace':[0,0,0,1,1,1]}
+]
+
