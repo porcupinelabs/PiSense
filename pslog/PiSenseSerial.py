@@ -3,8 +3,32 @@ import time
 import PiSenseNode
 import PiSenseDb
 import os
+import sys
+import binascii
 
 SimPkt = " 00 30 30 30 30 30 31 30 30 32 00 FF BE 03 0106 00 04 38 34 2E 31 03 0106 01 05 32 35 2E 31 32 03 0106 02 01 33 03 0106 03 06 31 34 39 2E 30 30 03 0106 04 03 31 2E 31 00\r\n"
+
+OTA_MAX_BLOCK_SIZE = 90
+d_status = {
+    0x00: 'OTA_SUCCESS_STATUS',
+    0x01: 'OTA_CLIENT_READY_STATUS',
+    0x02: 'OTA_NETWORK_ERROR_STATUS',
+    0x03: 'OTA_CRC_ERROR_STATUS',
+    0x04: 'OTA_NO_RESPONSE_STATUS',
+    0x05: 'OTA_SESSION_TIMEOUT_STATUS',
+    0x06: 'OTA_UPGRADE_STARTED_STATUS',
+    0x07: 'OTA_UPGRADE_COMPLETED_STATUS',
+    0x10: 'OTA_NO_SPACE_STATUS',
+    0x11: 'OTA_HW_FAIL_STATUS',
+    0x80: 'APP_UART_STATUS_CONFIRMATION',
+    0x81: 'APP_UART_STATUS_PASSED',
+    0x82: 'APP_UART_STATUS_UPGRADE_IN_PROGRESS',
+    0x83: 'APP_UART_STATUS_NO_UPGRADE_IN_PROGRESS',
+    0x84: 'APP_UART_STATUS_UNKNOWN_COMMAND',
+    0x85: 'APP_UART_STATUS_MALFORMED_REQUEST',
+    0x86: 'APP_UART_STATUS_MALFORMED_COMMAND',
+    0x87: 'APP_UART_STATUS_SESSION_TIMEOUT',
+}
 
 
 # Class for monitoring the PiSense Hub which is connected to Raspberry Pi via the serial port
@@ -16,6 +40,8 @@ class PiSenseHubMonitor:
         self.rxPacket = []
         self.rxMsgPacket = []
         self.rxMsgPacketReady = False
+        self.rxOtaPacket = []
+        self.rxOtaPacketReady = False
         self.simfile=None
         self.simlist=None
         self.simsize=0
@@ -30,7 +56,7 @@ class PiSenseHubMonitor:
             print 'sim file lines: ' + str(self.simsize)
         else:    
             if os.name == 'nt':
-                PortName = 'COM2'
+                PortName = 'COM3'
             else:
                 PortName = '/dev/ttyAMA0'
             self.ser = serial.Serial(PortName, 38400, timeout=0.1)
@@ -104,6 +130,10 @@ class PiSenseHubMonitor:
             self.rxMsgPacket = self.rxPacket
             self.rxMsgPacketReady = True
             return
+        elif endpoint == 3:
+            self.rxOtaPacket = self.rxPacket
+            self.rxOtaPacketReady = True
+            return
         if len(self.rxPacket) < 12: # Minimum valid packet length
             return
         serNum = ""
@@ -160,6 +190,69 @@ class PiSenseHubMonitor:
         return self.rxMsgPacket
 
 
+    def otaRecv(self, expect = None):
+        self.rxOtaPacketReady = False
+        timeOutCount = 8000 # in 10ms units
+        while self.rxOtaPacketReady == False:
+            time.sleep(0.01)
+            timeOutCount -= 1
+            if timeOutCount <= 0:
+                print "Timeout in NodeFwUpdate"
+                return False
+        if len(self.rxOtaPacket) < 2:
+            print "Response too short"
+            return False
+        status = self.rxOtaPacket[1]
+        if status in d_status:
+            if d_status[status] != expect:
+                print 'Error: OTA unexpected status (%s)' % d_status[status]
+                return False
+        else:
+            print 'Error: OTA unexpected status (UNKNOWN_0x%02x)' % status
+            return False
+        return True
 
+    def NodeFwUpdate(self, serNum, filename):
+        print 'NodeFwUpdate'
+        try:
+            filesize = os.path.getsize(filename)
+        except OSError, msg:
+            print msg
+            return([1])
+
+        print 'Serial number: %s' % serNum
+        print 'Firmware     : %s' % filename
+        print 'Firmware size: %d bytes' % filesize
+
+        command = "us " + serNum + " " + format(filesize, 'x') + "\n"
+        self.ser.write(command)
+        status = self.otaRecv('OTA_CLIENT_READY_STATUS')
+        if not status:
+            return [2]
+        print 'Firmware update started'
+
+        f = open(filename, 'rb')
+        remaining = filesize
+        while remaining > 0:
+            if remaining > OTA_MAX_BLOCK_SIZE:
+                size = OTA_MAX_BLOCK_SIZE
+            else:
+                size = remaining
+            remaining -= size
+            block = f.read(size)
+
+            command = "ub " + binascii.hexlify(block) + '\n'
+            self.ser.write(command)
+            if remaining > 0:
+                status = self.otaRecv('OTA_CLIENT_READY_STATUS')
+            else:
+                status = self.otaRecv('OTA_UPGRADE_COMPLETED_STATUS')
+            if not status:
+                return [3]
+            sys.stdout.write('.')
+            sys.stdout.flush()
+
+        print '\nFirmware update complete'
+        return [0]
 
 
