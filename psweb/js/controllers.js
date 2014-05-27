@@ -206,8 +206,39 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 	}
 
 	$scope.periodChange = function(newVal) {
-		//$scope.period = newVal;
-		//addChartData('10001001', '1', $scope.period);
+		var d1 = new Date();
+		var d2 = new Date();
+		d2 = Date.now();
+		switch (newVal) {
+			case 'hour':
+				d1 = d2 - TIME_HOUR;
+				break;
+			case 'day':
+				d1 = d2 - TIME_DAY;
+				break;
+			case '2day':
+				d1 = d2 - 2*TIME_DAY;
+				break;
+			case 'week':
+				d1 = d2 - 7*TIME_DAY;
+				break;
+			case 'month':
+				d1 = d2 - 30*TIME_DAY;
+				break;
+			case '6month':
+				d1 = d2 - TIME_YEAR/2;
+				break;
+			case 'year':
+				d1 = d2 - TIME_YEAR;
+				break;
+			case 'all':
+				d1 = d2 - 5*TIME_YEAR;
+				break;
+			default:
+				d1 = d2 - 2*TIME_DAY;
+				break;
+		}
+		SetGraphState(d1, d2);
 	}
 
 	$scope.zoomOut = function() {
@@ -241,7 +272,7 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 		var end = $scope.graphState.dtEnd.getTime();
 		var span = end - start;
 		var center = start + span / 2;
-		center = center - (span * 0.1);
+		center = center - (span * 0.25);
 		start = center - span / 2;
 		end = center + span / 2;
 		SetGraphState(start, end);
@@ -252,18 +283,13 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 		var end = $scope.graphState.dtEnd.getTime();
 		var span = end - start;
 		var center = start + span / 2;
-		center = center + (span * 0.1);
+		center = center + (span * 0.25);
 		start = center - span / 2;
 		end = center + span / 2;
 		SetGraphState(start, end);
 	}
 
-	var d1 = new Date();
-	var d2 = new Date();
-	d2 = Date.now();
-	var d1 = d1 - 2*TIME_DAY;
-	SetGraphState(d1, d2);
-
+	$scope.periodChange('2day')
   } ]);
 
 

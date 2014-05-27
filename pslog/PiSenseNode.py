@@ -95,7 +95,7 @@ class PsNodeList:
     def GetNodeListWithData(self, PsDb):
         db = PsDb.GetNodeDb()
         for dbnode in db:
-            print dbnode
+            #print dbnode
             Node = FirstMatch(x for x in self.NodeList if x.Id == dbnode['Id'])
             DictSensorData=Node.GetDictSensorData()
             if not Node == None:
