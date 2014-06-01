@@ -30,9 +30,11 @@ NodeDb=[]# may contain virtual sensors
 GlobalVSensors=[]
 NodeVSensors=[]
 ThreadList=[]
+EventProc=[]
 
 #threading locks
 LockNodeDesc=threading.Lock()
+LastDateTime=0
 
 class PiSenseCSV:
     def __init__(self):
@@ -50,7 +52,7 @@ class PiSenseCSV:
         self.Hub=Hub #used as a handle to the Hub for serial port and sensor command access
         #get global virtual sensor file (sensor postprocessing replacement)
         try:
-            f=open('global_vsensors.dat')
+            f=open('global_vsensors.cfg')
             try:
                 s=f.read()
                 global GlobalVSensors
@@ -61,11 +63,22 @@ class PiSenseCSV:
             pass #list will remain empty
        #node specific vsensors (handles calibration, for example)
         try:
-            f=open('node_vsensors.dat')
+            f=open('node_vsensors.cfg')
             try:
                 s=f.read()
                 global NodeVSensors
                 NodeVSensors=ast.literal_eval(s) #expecting a dictionary indexed by serial number
+            except:
+                f.close() #list will remain empty, but close the file handle
+        except:
+            pass #list will remain empty
+
+        try:
+            f=open('event.cfg')
+            try:
+                s=f.read()
+                global EventProc
+                EventProc=ast.literal_eval(s) #expecting a dictionary indexed by serial number
             except:
                 f.close() #list will remain empty, but close the file handle
         except:
@@ -151,6 +164,7 @@ class PiSenseCSV:
                 for k in range(self.numvalues[position][i]):
                     f.write(',')
         f.write(',' + Value)
+
         self.columns[position]=expected_column+1
 
         #queue the reading for the summary thread
@@ -171,6 +185,23 @@ class PiSenseCSV:
                                                                          templist[2],templist[3],templist[4])))
         except:
             print templist
+
+        for event_processor in EventProc:
+            #is sensor in trigger list?
+            for nodedict in RawNodeDb:
+                if nodedict['Id'] == Id:
+                    break
+            try:
+                for sensordict in nodedict['SensorList']:
+                    if sensordict['SensorNum'] == SensorNum:
+                        if sensordict['Property'] in event_processor['Inputs']:
+                            global LastDateTime
+                            if (DateTime != LastDateTime):
+                                module=__import__(event_processor['Module'])
+                                module.event_trigger([],Value, DateTime)
+                            LastDateTime=DateTime
+            except:
+                pass #sensor list may not have been created yet
 
     def GetNodeDb(self):
         global RawNodeDb
