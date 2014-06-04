@@ -36,6 +36,8 @@ EventProc=[]
 LockNodeDesc=threading.Lock()
 LastDateTime=0
 
+DataDir='data'
+
 class PiSenseCSV:
     def __init__(self):
         self.csvfiles=[] #let this be a list of raw data files
@@ -45,8 +47,13 @@ class PiSenseCSV:
         pass
 
     def Open(self, Hub):
+        global DataDir
+        try:
+            os.mkdir(DataDir)
+        except:
+            pass #assuming directory is there; add error handling here
         #open nodelist file - 1 line per powerup/reset - lists discovered nodes
-        self.NodelistFile=open('nodelist.csv','w')
+        self.NodelistFile=open(DataDir + '/nodelist.csv','w')
         self.NodelistFile.write('\n'+time.asctime())
         self.opened=True
         self.Hub=Hub #used as a handle to the Hub for serial port and sensor command access
@@ -97,8 +104,9 @@ class PiSenseCSV:
         # also keep a regular list
         global AcviteNodeList
         ActiveNodeList.append(Id)
-        # open the raw data file for this node 
-        f = open(Id+'_raw.csv','a+') #a+  reading allowed
+        # open the raw data file for this node
+        global DataDir
+        f = open(DataDir + '/'+ Id+'_raw.csv','a+') #a+  reading allowed
         self.csvfiles.append(f)
         self.columns.append(0)
         self.numvalues.append([])
@@ -111,7 +119,7 @@ class PiSenseCSV:
             q=Queue.Queue()
             IntervalNodeList[SummaryIntervals.index(i)].append(q);
         #keep a sensor list for the nodes
-        f=open(Id+'_sensors.csv','a')
+        f=open(DataDir + '/'+ Id+'_sensors.csv','a')
         f.write('\n'+time.asctime())
         f.close()
         #get a description for this node and save the attributes
@@ -122,7 +130,8 @@ class PiSenseCSV:
     def SensorNew(self, Id, SensorNum):
         print "new sensor", Id, SensorNum
         #append this sensor to the current line of this node's sensor file
-        f=open(Id+'_sensors.csv','a')
+        global DataDir
+        f=open(DataDir + '/'+ Id+'_sensors.csv','a')
         f.write(','+str(SensorNum))
         f.close()
         #maintain a sensorlist in memory too
@@ -282,7 +291,8 @@ class PiSenseCSV:
             count=(start_mod - end_mod) + 1 #the number of results to return
 
             #find sensor position in summary file: note - it is based on last powerup of that node
-            SensorListName = Id + '_sensors.csv'
+            global DataDir
+            SensorListName = DataDir + '/'+ Id + '_sensors.csv'
             SensorArrayFile=open('../pslog/'+SensorListName,'r')
             SensorReader=csv.reader(SensorArrayFile)
             SensorArray=[]
@@ -336,7 +346,7 @@ class PiSenseCSV:
             #initial implementation will return complete averages for datasets that encompass
             #the entire interval.  Decide later what to do about partial intervals during which the sensor was not
             #reporting the entire time.
-            filename = str(Id)+'_'+str(interval_secs)+'.csv'
+            filename = DataDir + '/'+ str(Id)+'_'+str(interval_secs)+'.csv'
             f=open('../pslog/'+filename, 'r')
             r=csv.reader(f)
             for row in r:
@@ -535,7 +545,7 @@ class PsCSVThread(threading.Thread):
                             #attempt to avoid empty lines
                             fully_built = False
                 if fully_built:
-                    f=open(Id+'_'+str(i)+'.csv','a')
+                    f=open(DataDir + '/'+ Id+'_'+str(i)+'.csv','a')
                     f.write(newfileline+'\n')
                     f.close()
 
@@ -555,7 +565,8 @@ class NewSensorQueryThread(threading.Thread):
             for node_dict in RawNodeDb:
                 if node_dict['Id'] == self.Id:
                     try:
-                        f=open(str(self.Id) + '_'+ str(self.SensorNum) + '.dat')
+                        global DataDir
+                        f=open(DataDir + '/'+ str(self.Id) + '_'+ str(self.SensorNum) + '.dat')
                         try:
                             s=f.read()
                             d=ast.literal_eval(s)
@@ -578,7 +589,7 @@ class NewSensorQueryThread(threading.Thread):
                                 val=EvalPacket(pkt)
                                 sens_dict[name]=val
                         node_dict['SensorList'].append(sens_dict)
-                        f=open(str(self.Id)+'_'+str(self.SensorNum)+'.dat','w')
+                        f=open(DataDir + '/'+ str(self.Id)+'_'+str(self.SensorNum)+'.dat','w')
                         f.write(str(sens_dict))
                         f.close()
         except:
@@ -602,7 +613,8 @@ class NewNodeQueryThread(threading.Thread):
             LockNodeDesc.acquire(True)
 
             try:
-                f=open(str(self.Id) + '.dat')
+                global DataDir
+                f=open(DataDir + '/'+ str(self.Id) + '.dat')
                 try:
                     s=f.read()
                     d=ast.literal_eval(s)
@@ -628,7 +640,7 @@ class NewNodeQueryThread(threading.Thread):
                         print 'node attr - ',name,':',val
                 RawNodeDb.append(entry)
 
-                f=open(str(self.Id)+'.dat','w')
+                f=open(DataDir + '/'+ str(self.Id)+'.dat','w')
                 f.write(str(entry))#TODO: there may be a nicer way to print this
                 f.close()
         except:
