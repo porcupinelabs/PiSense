@@ -54,7 +54,7 @@ def fwUpdate (serNum, filename):
 
     print "  File sent to node"
     print "  Waiting for node reboot"
-    time.sleep(10)
+    time.sleep(15)
     PrintSensorInfo("  Node after update:", serNum)
     return 0
 
