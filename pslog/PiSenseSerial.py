@@ -244,13 +244,14 @@ class PiSenseHubMonitor:
             command = "ub " + binascii.hexlify(block) + '\n'
             self.ser.write(command)
             if remaining > 0:
+                sys.stdout.write('.')
                 status = self.otaRecv('OTA_CLIENT_READY_STATUS')
             else:
+                sys.stdout.write('*')
                 status = self.otaRecv('OTA_UPGRADE_COMPLETED_STATUS')
+            sys.stdout.flush()
             if not status:
                 return [3]
-            sys.stdout.write('.')
-            sys.stdout.flush()
 
         print '\nFirmware update complete'
         return [0]
