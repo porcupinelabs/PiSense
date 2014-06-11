@@ -2,6 +2,7 @@ apt-get install python-serial
 sed -i '/ttyAMA0/s/^/#/' /etc/inittab
 sed -i 's/ .*=ttyAMA0.[0-9]* / /' /boot/cmdline.txt
 
+sed -i '/exit/s/^/#/' /etc/rc.local
 echo "# Start PiSense" >> /etc/rc.local
 echo "cd ~pi/PiSense/pslog" >> /etc/rc.local
 echo "printf \"starting PiSense datalogger...\\n\"" >> /etc/rc.local
