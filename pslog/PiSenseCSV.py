@@ -232,30 +232,36 @@ class PiSenseCSV:
                 senscount=modified_node_dict['SensorCount']
                 #virtual sensor replacement
                 for vsensor in GlobalVSensors:
+                    all_inputs_present_in_raw_node_db = True
                     #find vsensor inputs in raw dictionary
                     for sensorname in vsensor['Inputs']:
-                        if (vsensor['Replace'][vsensor['Inputs'].index(sensorname)] == 1):
-                            for sensordict in modified_node_dict['SensorList']:
-                                if sensordict['Property'] == sensorname:
+                        found=False
+                        for sensordict in modified_node_dict['SensorList']:
+                            if sensordict['Property'] == sensorname:
+                                found=True
+                                if (vsensor['Replace'][vsensor['Inputs'].index(sensorname)] == 1):
                                     #delete it...
                                     modified_node_dict['SensorList'].remove(sensordict)
                                     senscount=senscount-1
+                        if not found:
+                            all_inputs_present_in_raw_node_db = False
                     #add virtual sensors to modified node dictionary's sensor list
-                    vsensordict = {}
-                    vsensordict['Id']=modified_node_dict['Id']
-                    #by convention, start these at 100.  do not use SensorCount because this
-                    #node attribute indicates the number of active sensors, and we don't want to
-                    #conflict with one that is disabled
-                    vsensordict['SensorNum']=GlobalVSensors.index(vsensor)+100
-                    vsensordict['Property']=vsensor['Output']
-                    vsensordict['DataType']=10
-                    vsensordict['Maximum']=0 #not populated
-                    vsensordict['Minimum']=0 #not populated
-                    vsensordict['Enable']=1
-                    vsensordict['Units']=vsensor['Units']
-                    senscount=senscount+1
-                    modified_node_dict['SensorCount']=senscount
-                    modified_node_dict['SensorList'].append(vsensordict)
+                    if (all_inputs_present_in_raw_node_db):
+                        vsensordict = {}
+                        vsensordict['Id']=modified_node_dict['Id']
+                        #by convention, start these at 100.  do not use SensorCount because this
+                        #node attribute indicates the number of active sensors, and we don't want to
+                        #conflict with one that is disabled
+                        vsensordict['SensorNum']=GlobalVSensors.index(vsensor)+100
+                        vsensordict['Property']=vsensor['Output']
+                        vsensordict['DataType']=10
+                        vsensordict['Maximum']=0 #not populated
+                        vsensordict['Minimum']=0 #not populated
+                        vsensordict['Enable']=1
+                        vsensordict['Units']=vsensor['Units']
+                        senscount=senscount+1
+                        modified_node_dict['SensorCount']=senscount
+                        modified_node_dict['SensorList'].append(vsensordict)
                 NodeDb.append(modified_node_dict)
         return NodeDb
 
