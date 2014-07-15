@@ -186,6 +186,7 @@
                                     google.visualization.events.addListener($scope.chartWrapper, 'error', function (err) {
                                         console.log("Chart not displayed due to error: " + err.message + ". Full error object follows.");
                                         console.log(err);
+                                        google.visualization.errors.removeError(err.id);
                                     });
                                     google.visualization.events.addListener($scope.chartWrapper, 'select', function () {
                                         var selectedItem = $scope.chartWrapper.getChart().getSelection()[0];

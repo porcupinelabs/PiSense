@@ -40,7 +40,10 @@ PiSenseServices.factory('svcPisense', function ($resource) {
                         {Property:'Temperature', Units:'Deg C',  LastValue:'22.1', Minimum:'0', Maximum:'100'},
                         {Property:'Humidity',    Units:'% RH',   LastValue:'54',   Minimum:'0', Maximum:'100'},
                         {Property:'Pressure',    Units:'mbar',   LastValue:'1002', Minimum:'0', Maximum:'100'},
-                        {Property:'Light',       Units:'% full', LastValue:'78',   Minimum:'0', Maximum:'100'}
+                        {Property:'Light',       Units:'% full', LastValue:'78',   Minimum:'0', Maximum:'100'},
+                        {Property:'Acceleration',Units:'g',      LastValue:'1.23', Minimum:'0', Maximum:'100'},
+                        {Property:'Spin',        Units:'deg/s',  LastValue:'3.56', Minimum:'0', Maximum:'100'},
+                        {Property:'Heading',     Units:'deg',    LastValue:'178',  Minimum:'0', Maximum:'100'}
                      ]}
                 ];
                 callback(fakedata);

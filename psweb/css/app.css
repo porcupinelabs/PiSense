@@ -105,3 +105,6 @@ ul.dash > li > ul > li > dd{
   min-width: 75px;
 }
 
+/** History **/
+
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

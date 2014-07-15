@@ -8,7 +8,8 @@ var PiSenseApp = angular.module('PiSenseApp', [
   'PiSenseControllers',
   'PiSenseFilters',
   'PiSenseServices',
-  'googlechart'
+  'googlechart',
+  'ui.bootstrap'
 ]);
 
 PiSenseApp.config(['$routeProvider',

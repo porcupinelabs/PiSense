@@ -68,6 +68,14 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 	$scope.graphState = {};
 	$scope.flatSensorList = [];
 	$scope.filterProperty = "";
+	$scope.propertyList = [];
+
+	var FindPropertyInList = function (property) {
+		for (var i=0; i<$scope.propertyList.length; i++)
+			if ($scope.propertyList[i].property == property)
+				return i;
+		return -1;
+	}
 
 	svcPisense.fetchNodeListWithData(function (nodelist) {
 		$scope.nodes = patchNodeList(nodelist,false);
@@ -77,10 +85,21 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 	  	for (var i = 0; i < nodelist.length; i++)
 	  		for (var j=0; j<nodelist[i].SensorList.length; j++) {
 	  			$scope.nodesChecked[flatListEntryNum] = false;
-	  			$scope.flatSensorList.push({entryNum: flatListEntryNum++, nodeId:nodelist[i].Id, nickname:nodelist[i].Nickname, sensorNum:nodelist[i].SensorList[j].SensorNum, property:nodelist[i].SensorList[j].Property, active:false});
+	  			$scope.flatSensorList.push({entryNum: flatListEntryNum++, nodeId:nodelist[i].Id, nickname:nodelist[i].Nickname, sensorNum:nodelist[i].SensorList[j].SensorNum, property:nodelist[i].SensorList[j].Property, units:nodelist[i].SensorList[j].Units, active:false});
 	  		}
 		if ($scope.flatSensorList.length != 0)
 			$scope.filterProperty = $scope.flatSensorList[0].property;
+
+		// Make a one dimensional list of all properties supported by all nodes/sensors
+		$scope.propertyList = [];
+		var propertyListEntryNum = 0;
+  		for (var i=0; i<$scope.flatSensorList.length; i++) {
+  			var j = FindPropertyInList($scope.flatSensorList[i].property)
+  			if (j == -1)
+  				$scope.propertyList.push({entryNum: propertyListEntryNum++, property: $scope.flatSensorList[i].property, sensorList:[i]});
+  			else $scope.propertyList[j].sensorList.push(i);
+		}
+
  	});
 
 	$scope.chart = {};
@@ -88,6 +107,7 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
     $scope.chart.cssStyle = "height:400px; width:100%";
     $scope.chart.options = {
         "title": "Sensor History",
+        //"theme": "maximized",
         "isStacked": "true",
         "fill": 20,
         "displayExactValues": true,
@@ -97,7 +117,9 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
         },
         "hAxis": {
             "title": "Date",
-            "format": "yyyy-MM-dd HH:mm"
+            "format": "yyyy-MM-dd HH:mm",
+            "gridlines": {"count": 5},
+            "minorGridlines": {"count": 3}
         }
     };
     $scope.chart.formatters = {};
@@ -107,8 +129,14 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 	};
 
 	var SetGraphState = function(start, end) {	// start and end are in milliseconds
+		var now = new Date();
+		now = Date.now();
+		if (end > now) {
+			start -= end - now;
+			end = now
+		}
 		var span = end - start;
-		$scope.chart.options.hAxis.format = (span > 4*TIME_DAY) ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm";
+		$scope.chart.options.hAxis.format = (span > 3*TIME_DAY) ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm";
 
 		var interval = TIME_MINUTE; 
 		if (span <= (6*TIME_HOUR)) {
@@ -146,8 +174,9 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 	}
 
 	var addChartData = function(flatSensorListEntry) {
-		$scope.chart.data.cols.push({id:flatSensorListEntry.nodeId, label:flatSensorListEntry.nodeId, type: "number"});
-		$scope.chart.options.vAxis.title = flatSensorListEntry.property;
+		var dataSetName = flatSensorListEntry.nickname + " " + flatSensorListEntry.property;
+		$scope.chart.data.cols.push({id:flatSensorListEntry.nodeId, label:dataSetName, type: "number"});
+		$scope.chart.options.vAxis.title = flatSensorListEntry.property + " (" + flatSensorListEntry.units + ")";
 		svcPisense.fetchHistory(flatSensorListEntry.nodeId, flatSensorListEntry.sensorNum, $scope.graphState, 
 			function(history) {
 				var firstSensor = ($scope.chart.data.rows.length == 0);
@@ -291,11 +320,6 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 
 	$scope.periodChange('2day')
   } ]);
-
-
-$('#jstree_demo_div').on("changed.jstree", function (e, data) {
-  console.log(data.selected);
-});
 
 
 function patchNodeList(nodelist,short) {
