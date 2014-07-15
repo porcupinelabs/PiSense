@@ -6,7 +6,7 @@ import PiSenseNode
 import PiSenseDb
 
 HOST = 'localhost'
-PORT = 50001
+PORT = 59747
 
 runServer = False
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
