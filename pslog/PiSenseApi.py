@@ -102,7 +102,7 @@ class PsApiThread(threading.Thread):
                         sernum = req['sernum']
                         attrib = req['attrib']
                         inst = req['inst']
-                        ret = HubMon.GetAttribute(sernum, attrib, inst)
+                        ret = HubMon.GetAttributeStringArg(sernum, attrib, inst)
                         resp = {'res':'ok', 'ret':ret}
                     elif req['cmd'] == 'nodefwupdate':
                         sernum = req['sernum']

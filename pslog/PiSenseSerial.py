@@ -171,16 +171,12 @@ class PiSenseHubMonitor:
             Nodes.ProcessReport(PsDb, serNum, instance, value, now, lqi, rssi)
             msgOffset += 5 + payloadSize
 
-    def GetAttribute(self, serNum, attrib, inst):
-        print serNum, attrib, inst
+    def GetAttributeSingleTry(self, serNum, attrib, inst):
         command = "g " + serNum + " " + attrib + " " + inst + "\n"
-
         #print bytearray(command, "UTF-8")
-
         self.ser.write(bytearray(command, "UTF-8"))
-
         self.rxMsgPacketReady = False
-        timeOutCount = 800 # in 100ms units
+        timeOutCount = 200 # in 100ms units, hub times out after 15 sec, so this should never really happen
         while self.rxMsgPacketReady == False:
             time.sleep(0.1)
             timeOutCount -= 1
@@ -189,6 +185,20 @@ class PiSenseHubMonitor:
                 return [0]
         return self.rxMsgPacket
 
+    def GetAttributeStringArg(self, serNum, attrib, inst):  # Called from PsApi.py (already have args as strings)
+        print serNum, attrib, inst
+        retryCount = 5
+        while retryCount > 0:
+            pkt = self.GetAttributeSingleTry(serNum, attrib, inst)
+            if len(pkt) > 1:
+                return pkt
+            print "GetAttribute retrying"
+            retryCount -= 1
+        print "GetAttribute retries exhausted"
+        return [0]
+
+    def GetAttribute(self, serNum, attrib, inst):   # Takes args as numbers
+        return self.GetAttributeStringArg(serNum, '{:02x}'.format(attrib), '{:02x}'.format(inst))
 
     def otaRecv(self, expect = None):
         self.rxOtaPacketReady = False

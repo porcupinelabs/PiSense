@@ -584,17 +584,17 @@ class NewSensorQueryThread(threading.Thread):
                         #gather the data over the air
                         attrCount=node_dict['AttribCount']
                         sensorAttribCount=node_dict['SensorAttributes']
+                        sensorAttrInfo=node_dict['sensorAttrInfo']
                         sens_dict={'Id':self.Id,'SensorNum':self.SensorNum}
                         try:
                             for attrNum in range(sensorAttribCount):
-                                pkt = self.Hub.GetAttribute(str(self.Id), hex(ATTRIB_ENUM)[2:], hex(attrNum+attrCount-sensorAttribCount)[2:])
-                                attrCode = EvalPacket(pkt)
+                                attrCode = sensorAttrInfo[attrNum]['attrCode']
                                 if not attrCode == ATTRIB_NULL:
-                                    pkt = self.Hub.GetAttribute(str(self.Id), hex(ATTRIB_NAME)[2:], hex(attrNum+attrCount-sensorAttribCount)[2:])
-                                    name=EvalPacket(pkt)
-                                    pkt = self.Hub.GetAttribute(str(self.Id), hex(attrCode)[2:], hex(self.SensorNum)[2:])
+                                    name = sensorAttrInfo[attrNum]['name']
+                                    pkt = self.Hub.GetAttribute(str(self.Id), attrCode, self.SensorNum)
                                     val=EvalPacket(pkt)
                                     sens_dict[name]=val
+                                    print 'sensor attr - ',name,':',val
                             node_dict['SensorList'].append(sens_dict)
                             f=open(DataDir + '/'+ str(self.Id)+'_'+str(self.SensorNum)+'.dat','w')
                             f.write(str(sens_dict))
@@ -637,20 +637,29 @@ class NewNodeQueryThread(threading.Thread):
                 try:
                     entry={'Id':self.Id,'SensorList':[],'Nickname':str(self.Id)}
                     #gather the data over the air
-                    pkt=self.Hub.GetAttribute(str(self.Id), hex(ATTRIB_ATTRIBUTE_COUNT)[2:],'0')
+                    pkt=self.Hub.GetAttribute(str(self.Id),ATTRIB_ATTRIBUTE_COUNT,0)
                     attrCount = int(EvalPacket(pkt))
-                    pkt=self.Hub.GetAttribute(str(self.Id), hex(ATTRIB_SENSOR_ATTRIB_COUNT)[2:],'0')
+                    pkt=self.Hub.GetAttribute(str(self.Id),ATTRIB_SENSOR_ATTRIB_COUNT,0)
                     sensorAttribCount = int(EvalPacket(pkt))
                     for attrNum in range(attrCount-sensorAttribCount):
-                        pkt=self.Hub.GetAttribute(str(self.Id),hex(ATTRIB_ENUM)[2:],hex(attrNum)[2:])
+                        pkt=self.Hub.GetAttribute(str(self.Id),ATTRIB_ENUM,attrNum)
                         attrCode = int(EvalPacket(pkt))
                         if not attrCode == ATTRIB_NULL:
-                            pkt = self.Hub.GetAttribute(str(self.Id), hex(ATTRIB_NAME)[2:], hex(attrNum)[2:])
+                            pkt = self.Hub.GetAttribute(str(self.Id),ATTRIB_NAME,attrNum)
                             name=EvalPacket(pkt)
-                            pkt = self.Hub.GetAttribute(str(self.Id), hex(attrCode)[2:], '0')
+                            pkt = self.Hub.GetAttribute(str(self.Id),attrCode,0)
                             val=EvalPacket(pkt)
                             entry[name]=val
                             print 'node attr - ',name,':',val
+                    sensorAttrInfo = []
+                    for attrNum in range(sensorAttribCount):
+                        pkt = self.Hub.GetAttribute(str(self.Id),ATTRIB_ENUM,attrNum+attrCount-sensorAttribCount)
+                        attrCode = EvalPacket(pkt)
+                        if not attrCode == ATTRIB_NULL:
+                            pkt = self.Hub.GetAttribute(str(self.Id),ATTRIB_NAME,attrNum+attrCount-sensorAttribCount)
+                            name=EvalPacket(pkt)
+                            sensorAttrInfo.append({'attrCode':attrCode, 'name':name})
+                    entry['sensorAttrInfo'] = sensorAttrInfo
                     RawNodeDb.append(entry)
 
                     f=open(DataDir + '/'+ str(self.Id)+'.dat','w')
@@ -659,8 +668,9 @@ class NewNodeQueryThread(threading.Thread):
                 except:
                     #some problem gathering attributes
                     print 'problem gathering node attributes'
-                    entry={'Id':self.Id,'SensorList':[],'Nickname':str(self.Id),'HardwareVersion': '?', 'SerialNumber': '?', 'SensorCount': 1, 'TxPower': 13, 'AttribCount': 1, 'SensorAttributes': 6, 'RxSignalStrength': 100, 'Model': '?', 'FirmwareVersion': '?', 'Manufacturer': 'Porcupine'}
-                    RawNodeDb.append(entry)
+                    # Instead of adding placeholder data to RawNodeDb, just continue.  The node query will get retried after a reboot.
+                    #entry={'Id':self.Id,'SensorList':[],'Nickname':str(self.Id),'HardwareVersion': '?', 'SerialNumber': '?', 'SensorCount': 1, 'TxPower': 13, 'AttribCount': 1, 'SensorAttributes': 6, 'RxSignalStrength': 100, 'Model': '?', 'FirmwareVersion': '?', 'Manufacturer': 'Porcupine', 'sensorAttrInfo':[]}
+                    #RawNodeDb.append(entry)
         except:
             traceback.print_exc()
             time.sleep(1.0)
