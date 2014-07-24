@@ -12,7 +12,7 @@ import  wx.lib.newevent
 (UpdateDataEvent, EVT_UPDATE_DATA) = wx.lib.newevent.NewEvent()
 
 HOST = 'localhost'
-PORT = 50001
+PORT = 59747
 
 #---------------------------------------------------------------------------
 

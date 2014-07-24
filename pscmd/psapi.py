@@ -3,7 +3,7 @@ import json
 from struct import *
 
 HOST = 'localhost'
-PORT = 50001
+PORT = 59747
 
 def ExecCommand(req):
     try:

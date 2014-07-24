@@ -324,7 +324,7 @@ PiSenseControllers.controller('HistoryCtrl', ['$scope', '$routeParams', 'svcPise
 
 function patchNodeList(nodelist,short) {
   	for (var i = 0; i < nodelist.length; i++) {
-		nodelist[i].LastSignalStrength = Math.ceil(6 * (nodelist[i].LastRssi - 165) / (233 - 165));
+		nodelist[i].LastSignalStrength = Math.min(6, Math.ceil(6 * (nodelist[i].LastRssi - 165) / (233 - 165)));
 		nodelist[i].SensorCount = nodelist[i].SensorList.length;
   		if (isNaN(nodelist[i].LastDateTime))
 			nodelist[i].LastDateTimeAgo = (short ? "?" : "Unknown");

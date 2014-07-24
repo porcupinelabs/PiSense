@@ -6,7 +6,7 @@ import PiSenseNode
 import PiSenseDb
 
 HOST = 'localhost'
-PORT = 50001
+PORT = 59747
 
 runServer = False
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -102,7 +102,7 @@ class PsApiThread(threading.Thread):
                         sernum = req['sernum']
                         attrib = req['attrib']
                         inst = req['inst']
-                        ret = HubMon.GetAttribute(sernum, attrib, inst)
+                        ret = HubMon.GetAttributeStringArg(sernum, attrib, inst)
                         resp = {'res':'ok', 'ret':ret}
                     elif req['cmd'] == 'nodefwupdate':
                         sernum = req['sernum']

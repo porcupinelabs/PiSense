@@ -93,12 +93,14 @@ class PsNodeList:
         return result
 
     def GetNodeListWithData(self, PsDb):
-        db = PsDb.GetNodeDb()
-        for dbnode in db:
-            #print dbnode
-            Node = FirstMatch(x for x in self.NodeList if x.Id == dbnode['Id'])
-            DictSensorData=Node.GetDictSensorData()
-            if not Node == None:
+        db = list(PsDb.GetNodeDb())     # Get a scratch copy of the node list
+        for Node in self.NodeList:
+            dbnode = FirstMatch(x for x in db if x['Id'] == Node.Id)
+            if dbnode == None:
+                dbnode = {'Id':Node.Id, 'SerialNumber':Node.Id, 'HardwareVersion':"?", 'FirmwareVersion':"?", 'Model':"?", 'Manufacturer':"?", 'Nickname':"initializing...", 'SensorCount':0, 'SensorList':[], 'LastDateTime':Node.LastDateTime, 'LastLqi':Node.LastLqi, 'LastRssi':Node.LastRssi, 'LastBattery':Node.LastBattery}
+                db.append(dbnode)
+            else:
+                DictSensorData=Node.GetDictSensorData()
                 dbnode['LastDateTime'] = Node.LastDateTime
                 dbnode['LastLqi']      = Node.LastLqi
                 dbnode['LastRssi']     = Node.LastRssi
