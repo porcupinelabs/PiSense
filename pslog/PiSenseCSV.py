@@ -195,6 +195,13 @@ class PiSenseCSV:
         except:
             print templist
 
+        try:
+            testflushfd=open(DataDir + '/flush','r')
+            f.flush()
+            f.close(testflushfd)
+        except:
+            pass
+
         for event_processor in EventProc:
             #is sensor in trigger list?
             for nodedict in RawNodeDb:
