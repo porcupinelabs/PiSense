@@ -145,8 +145,8 @@ def EvalPacket(pkt):
         return "Error"
 
     if len(pkt) < 13:
-        print "Packet too short"
-        print pkt
+        #print "Packet too short"
+        #print pkt
         return "Error"
 
     endpoint = pkt[0]

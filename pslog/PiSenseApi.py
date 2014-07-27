@@ -106,8 +106,8 @@ class PsApiThread(threading.Thread):
                         resp = {'res':'ok', 'ret':ret}
                     elif req['cmd'] == 'nodefwupdate':
                         sernum = req['sernum']
-                        filename = req['filename']
-                        ret = HubMon.NodeFwUpdate(sernum, filename)
+                        fw = req['fw']
+                        ret = HubMon.NodeFwUpdate(sernum, fw)
                         resp = {'res':'ok', 'ret':ret}
                     elif req['cmd'] == 'getstats':
                         ret = NodeList.GetDictStats()

@@ -222,17 +222,24 @@ class PiSenseHubMonitor:
             return False
         return True
 
-    def NodeFwUpdate(self, serNum, filename):
+    def NodeFwUpdate(self, serNum, fw):
         print 'NodeFwUpdate'
-        try:
-            filesize = os.path.getsize(filename)
-        except OSError, msg:
-            print msg
-            return([1])
 
-        print 'Serial number: %s' % serNum
-        print 'Firmware     : %s' % filename
-        print 'Firmware size: %d bytes' % filesize
+        try:
+            models = fw["models"]
+            hwVersions = fw["hwVersions"]
+            fwVersion = fw["fwVersion"]
+            filesize = fw["fwSize"]
+            heximg = fw["image"]
+        except KeyError:
+            print "Bad parameter"
+            return [1]
+
+        print '  Serial number    : %s' % serNum
+        print '  Firmware size    : %d bytes' % filesize
+        print '  Models           : %s' % models
+        print '  Hardware Versions: %s' % hwVersions
+        print '  Firmware Version : %s' % fwVersion
 
         command = "us " + serNum + " " + format(filesize, 'x') + "\n"
         self.ser.write(command)
@@ -241,7 +248,6 @@ class PiSenseHubMonitor:
             return [2]
         print 'Firmware update started'
 
-        f = open(filename, 'rb')
         remaining = filesize
         while remaining > 0:
             if remaining > OTA_MAX_BLOCK_SIZE:
@@ -249,9 +255,10 @@ class PiSenseHubMonitor:
             else:
                 size = remaining
             remaining -= size
-            block = f.read(size)
+            block = heximg[:2*size]
+            heximg = heximg[2*size:]
 
-            command = "ub " + binascii.hexlify(block) + '\n'
+            command = "ub " + block + '\n'
             self.ser.write(command)
             if remaining > 0:
                 sys.stdout.write('.')
