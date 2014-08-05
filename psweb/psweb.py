@@ -28,6 +28,7 @@ class MyHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 self.processJsonRequest(queryParsed, pathlist[2:], jsonp)
                 return
         # Default to serve up a local file 
+        self.path = "http/" + self.path
         SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self);
 
     def processJsonRequest(self, query, pathlist, jsonp):
@@ -58,7 +59,6 @@ def WebServerMain():
     httpd.timeout = 1
     print "Serving at port", PORT
     while RunWebServer:
-#        httpd.handle_request()
         httpd.serve_forever()
 
 
