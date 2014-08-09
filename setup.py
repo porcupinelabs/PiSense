@@ -10,4 +10,12 @@ setup(
     license='license.txt',
     description='Simple wireless sensor network for Raspberry Pi',
     long_description=open('README.md').read(),
+	#install_requires = [
+    #    'autojenkins',
+    #    'argparse'
+    #],
+	package_data = {
+        '': ['*.txt', '*.md', '*.sh'],
+        'psweb': ['*.cfg','*.html','*.css','*.js','*.png','*.jpg']
+    }
 )
