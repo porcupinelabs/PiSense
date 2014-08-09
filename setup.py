@@ -14,8 +14,9 @@ setup(
     #    'autojenkins',
     #    'argparse'
     #],
+    include_package_data = True
 	package_data = {
-        '': ['*.txt', '*.md', '*.sh'],
-        'psweb': ['*.cfg','*.html','*.css','*.js','*.png','*.jpg']
-    }
+		'': ['*.txt', '*.md', '*.sh'],
+		'psweb': ['*.cfg','*.html','*.css','*.js','*.png','*.jpg']
+	}
 )
