@@ -17,6 +17,7 @@ setup(
     include_package_data = True,
 	package_data = {
 		'': ['*.txt', '*.md', '*.sh'],
-		'psweb': ['*.cfg','*.html','*.css','*.js','*.png','*.jpg']
+		'pslog': ['*.cfg'],
+		'psweb': ['*.html','*.css','*.js','*.png','*.jpg']
 	}
 )
