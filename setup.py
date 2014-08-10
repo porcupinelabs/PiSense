@@ -10,7 +10,7 @@ setup(
     license='license.txt',
     description='Simple wireless sensor network for Raspberry Pi',
     long_description=open('README.md').read(),
-	install_requires = ['pyserial>=2.5'],
+	#install_requires = ['pyserial>=2.5'],
     include_package_data = True,
 	package_data = {
 		'pslog': ['*.cfg','../*.txt','../*.md','../*.sh','../*.py'],
