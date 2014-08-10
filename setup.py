@@ -10,14 +10,19 @@ setup(
     license='license.txt',
     description='Simple wireless sensor network for Raspberry Pi',
     long_description=open('README.md').read(),
-	#install_requires = [
-    #    'autojenkins',
-    #    'argparse'
-    #],
+	install_requires = ['pyserial>=2.5'],
     include_package_data = True,
 	package_data = {
-		'': ['*.txt', '*.md', '*.sh'],
-		'pslog': ['*.cfg'],
-		'psweb': ['*.html','*.css','*.js','*.png','*.jpg']
+		'pslog': ['*.cfg','../*.txt','../*.md','../*.sh','../*.py'],
+		'psweb': ['http/*.html',
+                  'http/*.png',
+                  'http/css/*',
+                  'http/img/*.css',
+                  'http/img/*.png',
+                  'http/img/nodes/*',
+                  'http/js/*',
+                  'http/lib/*',
+                  'http/partials/*'
+                 ]
 	}
 )
