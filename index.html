@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Pisense : Data collection software for the PiSense product">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Pisense</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/porcupinelabs/PiSense">View on GitHub</a>
+
+          <h1 id="project_title">Pisense</h1>
+          <h2 id="project_tagline">Data collection software for the PiSense product</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/porcupinelabs/PiSense/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/porcupinelabs/PiSense/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a name="pisense" class="anchor" href="#pisense"><span class="octicon octicon-link"></span></a>PiSense</h1>
+
+<p><img src="http://static.squarespace.com/static/53a4c712e4b095f006b5b72c/t/53deb6a9e4b0b2146863c9a1/1407104708842/?format=750w" alt=""></p>
+
+<p>PiSense is an easy to setup, wireless sensor network that uses your Raspberry Pi to collect sensor data and make it available on the web.  Just attach the PiSense Hub to your Pi's GPIO port and run our open source data collection app to start logging data from one or multiple sensors.  View your sensor data in real time or historical graphs from any web browser, anywhere.  More information on PiSense is
+available at Porcupine Labs - <a href="http://www.porcupinelabs.com">http://www.porcupinelabs.com</a></p>
+
+<p>This software is a customizable family of python apps that implement the PiSense data logger and web server.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>To install this software on a Raspberry Pi do the following:</p>
+
+<p><code>mkdir /home/pi/PiSense</code><br><code>cd /home/pi/PiSense</code><br><code>sudo apt-get install python-pip</code><br><code>pip install -t . https://github.com/porcupinelabs/PiSense/archive/master.zip</code><br><code>sudo bash install.sh</code><br><code>sudo reboot</code>  </p>
+
+<p>Upon rebooting, your Raspberry Pi will run pslog and psweb automatically.</p>
+
+<h2>
+<a name="pisense-applications" class="anchor" href="#pisense-applications"><span class="octicon octicon-link"></span></a>PiSense Applications</h2>
+
+<p>The following applications make up the PiSense software:</p>
+
+<ul>
+<li>pslog - The PiSense data logger.  Receives and logs sensor data from the Raspberry Pi's serial port.  Also implements a sockets API
+      that is used by psweb and other software components to get real-time and historical data.</li>
+<li>psweb - The PiSense web server.  Implements a light weight web server on the Raspberry Pi's port 80.  Web content is contained in the
+      http directory.  The PiSense web application is implemented using the Angular.js framework.</li>
+<li>pscmd - Contains two command line utilities:
+       * pscmd.py - A simple demo utility that demonstrates how to communicate with PiSense sensors
+       * psupdate.py - Checks sensor and hub firmware versions and optionally updates firmware</li>
+<li>psmon - A simple GUI (wxPython based) app that displays the status of your PiSense network</li>
+<li>scanchan - A utility that scans various radio channels in the 2.4GHz band and displays the amount of traffic seen on each channel.</li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Pisense maintained by <a href="https://github.com/porcupinelabs">porcupinelabs</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
