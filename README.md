@@ -7,10 +7,16 @@ This software is a customizable family of python apps that implement the PiSense
 
 ##Installation
 
-Once downloaded to your Raspberry Pi use install.sh to setup your Raspian Linux installation to run the PiSense data logger 
-and web server automatically on boot:
+To install this software on a Raspberry Pi do the following:
 
-`sudo bash install.sh`
+`mkdir /home/pi/PiSense`  
+`cd /home/pi/PiSense`  
+`sudo apt-get install python-pip`  
+`pip install -t . https://github.com/porcupinelabs/PiSense/archive/master.zip`  
+`sudo bash install.sh`  
+`sudo reboot`  
+
+Upon rebooting, your Raspberry Pi will run pslog and psweb automatically.
 
 ##PiSense Applications
 
