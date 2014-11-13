@@ -362,10 +362,12 @@ class PiSenseCSV:
             filename = DataDir + '/'+ str(Id)+'_'+str(interval_secs)+'.csv'
             f=open('../pslog/'+filename, 'r')
             r=csv.reader(f)
-            for row in r:
-                stamp=int(row[0])
-                    
-                if stamp>=start_mod and stamp<=end_mod and len(row)>position*3:
+            done=False
+            while not done:
+                try:
+                    row=r.next()
+                    stamp=int(row[0])
+                    if stamp>=start_mod and stamp<=end_mod and len(row)>position*3:
                         stamps.append(stamp)
                         if 'm' in mxa:
                             mins.append(row[position*3-2])
@@ -373,7 +375,10 @@ class PiSenseCSV:
                             maxes.append(row[position*3-1])
                         if 'a' in mxa:
                             avges.append(row[position*3])
-                     
+                except StopIteration:
+                    done=True
+                except:
+                    pass
             f.close()
         except IOError:
             #TODO: clean up any open file handles here
